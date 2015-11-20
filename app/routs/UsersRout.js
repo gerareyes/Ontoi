@@ -33,7 +33,7 @@ module.exports = (function() {
     // register a user (accessed at POST http://localhost:8080/api/users/register)
     .post(function(req, res) {
       // create a new instance of the User model
-      user = new User({
+      var user = new User({
         Nombre    : req.body.Nombre,  // set the User Nombre (comes from the request)
         Apellido  : req.body.Apellido,  // set the User Apellido (comes from the request)
         Edad      : req.body.Edad,  // set the User Edad (comes from the request)

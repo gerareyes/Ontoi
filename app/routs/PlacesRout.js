@@ -48,26 +48,34 @@ module.exports = (function() {
 
   });
 
-  router.route('/nearby')
+  router.route('/checkin_count')
     .get(function(req, res) {
-      var _id = mongoose.Types.ObjectId("564ef0dd66dc97ea09000001");
-      Place.findOne( { _id: _id }, { Visitors: { $elemMatch: { Email: "waka" ,CheckOut: null } } }, function (err, result){
-        
-        if (!result.Visitors.length) {
-          res.send({ response_code: 1, response_status: 'error', response_message: 'CheckIn record not found.'});
+      Place.aggregate(
+        [
+          {$unwind: '$Visitors'},
+          {$match: {'Visitors.Email': req.decoded.Email}},
+          {$group: {_id:{_id:"$_id", Nombre:"$Nombre", Descripcion:"$Descripcion", Rate:"$Rate", Ubicacion: "$Ubicacion"}, count: {$sum:1}}},
+          {$project: {_id:"$_id._id",Nombre:"$_id.Nombre",Descripcion:"$_id.Descripcion", Rate:"$_id.Rate", Ubicacion: "$_id.Ubicacion", count:"$count"}},
+          {$sort: {count:1}}
+        ],
+        function (err, result) {
+          res.json({ response_code: 0, response_status: 'success', response_message: result});
         }
-        else{
-          var currentTime = new Date();
-          var timeSpent = currentTime - result.Visitors[0].CheckIn;
+      );
+    })
+  ;
 
-          Place.update(
-            { _id: _id, "Visitors.CheckOut": null }, 
-            {$set:{"Visitors.$.CheckOut": currentTime, "Visitors.$.TimeSpent": timeSpent}},
-            function (err, result) {
-              res.json({ response_code: 0, response_status: 'success', response_message: 'Checkout successfully.'});
-            }
-          );
+  router.route('/nearby')
+    .post(function(req, res) {
+      Place.find({
+        Ubicacion: {
+          $near:{
+              $geometry: {type: 'Point', coordinates:[req.body.Longitud, req.body.Latitud]}
+          }
         }
+      }).limit(5).exec(
+      function (err, result) {
+        res.json({ response_code: 0, response_status: 'success', response_message: result});
       });
     })
   ;
@@ -193,8 +201,9 @@ module.exports = (function() {
 
       Place.aggregate(
         [
-          {$match: {_id : _id, 'Visitors.Email': 'gerareyes9@gmail.com'} },
+          {$match: {_id : _id} },
           {$unwind: '$Visitors'},
+          {$match: {'Visitors.Email': req.decoded.Email}},
           {$group:{'_id':'$_id','timeSpent': {'$sum': '$Visitors.TimeSpent'}}}
         ],
         function (err, result) {

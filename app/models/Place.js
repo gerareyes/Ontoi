@@ -25,4 +25,6 @@ var PlaceSchema   = new Schema({
   Visitors: [ ]
 });
 
+PlaceSchema.index({Ubicacion: '2dsphere'});
+
 module.exports = mongoose.model('Place', PlaceSchema);
