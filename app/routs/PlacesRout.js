@@ -91,7 +91,6 @@ module.exports = (function() {
       });
 
     })
-
   ;
 
   router.use('/:place_id', function(req, res, next) {
@@ -185,7 +184,24 @@ module.exports = (function() {
         res.json({ response_code: 0, response_status: 'success', response_message: ''});
       });
     })
+  ;
 
+  router.route('/:place_id/time_spent')
+    
+    .get(function(req, res) {
+      var _id = mongoose.Types.ObjectId(req.params.place_id);
+
+      Place.aggregate(
+        [
+          {$match: {_id : _id, 'Visitors.Email': 'gerareyes9@gmail.com'} },
+          {$unwind: '$Visitors'},
+          {$group:{'_id':'$_id','timeSpent': {'$sum': '$Visitors.TimeSpent'}}}
+        ],
+        function (err, result) {
+          res.json({ response_code: 0, response_status: 'success', response_message: result[0].timeSpent});
+        }
+      );
+    })
   ;
 
   return router;
