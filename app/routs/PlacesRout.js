@@ -67,16 +67,21 @@ module.exports = (function() {
 
   router.route('/nearby')
     .post(function(req, res) {
-      Place.find({
-        Ubicacion: {
-          $near:{
-              $geometry: {type: 'Point', coordinates:[req.body.Longitud, req.body.Latitud]}
+      if (isNaN(req.body.Longitud) || isNaN(req.body.Latitud)) {
+        res.send({ response_code: 1, response_status: 'error', response_message: 'Provide a valid location.'});
+      }
+      else {
+        Place.find({
+          Ubicacion: {
+            $near:{
+                $geometry: {type: 'Point', coordinates:[req.body.Longitud, req.body.Latitud]}
+            }
           }
-        }
-      }).limit(5).exec(
-      function (err, result) {
-        res.json({ response_code: 0, response_status: 'success', response_message: result});
-      });
+        }).limit(5).exec(
+        function (err, result) {
+          res.json({ response_code: 0, response_status: 'success', response_message: result});
+        });
+      }
     })
   ;
 
