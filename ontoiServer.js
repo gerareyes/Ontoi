@@ -11,7 +11,7 @@ var config     = require('./config');
 var router     = require('./app/routs/RoutConfiguration');
 var app        = express();
 
-var port = process.env.PORT || 8080;    // set port.
+var port = process.env.PORT || config.port;    // set port.
 
 mongoose.connect(config.database);      // Connect to database.
 

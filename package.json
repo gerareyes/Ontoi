@@ -5,6 +5,12 @@
     "body-parser": "~1.0.1",
     "express": "~4.0.0",
     "jsonwebtoken": "^5.4.1",
-    "mongoose": "~3.6.13"
+    "mocha": "^2.3.4",
+    "mongoose": "~3.6.13",
+    "should": "^7.1.1",
+    "supertest": "^1.1.0"
+  },
+  "scripts": {
+   "test": "node_modules/.bin/mocha -w"
   }
 }

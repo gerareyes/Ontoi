@@ -10,7 +10,7 @@ module.exports = (function() {
 
   router.use('/register', function(req, res, next) {
     if (!req.body.Nombre || !req.body.Edad || !req.body.Email || !req.body.Password) {
-      res.send({ response_code: 1, response_status: 'error', response_message: 'Missing required information'});
+      res.send({ response_code: 1, response_status: 'error', response_message: 'Missing required information.'});
     }
     else {
       User.findOne({ Email: req.body.Email }, 
@@ -45,9 +45,9 @@ module.exports = (function() {
       // save the user and check for errors
       user.save(function(err) {
         if (err)
-          res.send({ response_code: 1, response_status: 'error', response_message: 'Missing required information'});
+          res.send({ response_code: 1, response_status: 'error', response_message: 'Missing required information.'});
 
-        res.json({ response_code: 0, response_status: 'success', response_message: 'User successfully created'});
+        res.json({ response_code: 0, response_status: 'success', response_message: 'User successfully created.'});
       });
     })
   ;
