@@ -5,14 +5,15 @@
 
 // call the packages we need
 var express    = require('express');        // call express
-var app        = express();                 // define our app using express
+var app        = express(); // define our app using express
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
 var jwt        = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var config = require('./config'); // get our config file
+var config     = require('./config'); // get our config file
 
-var User       = require('./app/models/User');
-var Place       = require('./app/models/Place');
+var Place         = require('./app/models/Place');
+var User          = require('./app/models/User');
+var UserPlaceRate = require('./app/models/UserPlaceRate');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -134,16 +135,16 @@ router.route('/places/nearby')
 
   .get(function(req, res) {
     res.json(req.decoded);
-  });
+  })
 
 ;
 
 router.route('/places/:place_id/rate')
 
   .put(function(req, res) {
-    var ObjectId = mongoose.Types.ObjectId;
+    var isValidObjectId = new RegExp("^[0-9a-fA-F]{24}$");
 
-    if (!ObjectId.isValid(req.params.place_id)) {
+    if (!isValidObjectId.test(req.params.place_id)) {
       res.send({ response_code: 1, response_status: 'error', response_message: "Invalid Place." });
     }
     else {
@@ -154,14 +155,22 @@ router.route('/places/:place_id/rate')
         res.send({ response_code: 1, response_status: 'error', response_message: 'Only a number between 0-5 is allowed.' });
       }
       else {
-        var _id = new ObjectId(req.params.place_id);
-        Place.findOne({ _id: id }, 
-          function(err, place) {
-            res.json(place);
+        var _id = mongoose.Types.ObjectId(req.params.place_id);
+        var userPlaceRate = new UserPlaceRate({
+            Nombre: req.decoded.Nombre,
+            Apellido: req.decoded.Apellido,
+            Email: req.decoded.Email,
+            Rate: req.body.Rate
+          });
+        Place.findByIdAndUpdate({ _id: _id }, { $push: { Rate: userPlaceRate } }, { safe: true, upsert: true }, function (err, result) {
+          if (err)
+            res.send({ response_code: 1, response_status: 'error', response_message: 'Missing required information'});
+
+          res.json({ response_code: 0, response_status: 'success', response_message: 'Place successfully rated'});
         });
       }
     }
-  });
+  })
 
 ;
 

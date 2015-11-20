@@ -1,7 +1,6 @@
 // app/models/Place.js
 
 var mongoose     = require('mongoose');
-var UserPlaceRate = require('./UserPlaceRate');
 var Schema       = mongoose.Schema;
 
 var PlaceSchema   = new Schema({
@@ -22,7 +21,7 @@ var PlaceSchema   = new Schema({
       require: true
     }
   },
-  Rate: [UserPlaceRate]
+  Rate: [ ]
 });
 
 module.exports = mongoose.model('Place', PlaceSchema);
