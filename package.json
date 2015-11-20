@@ -1,6 +1,6 @@
 {
   "name": "ontoi",
-  "main": "ontoiServer.js",
+  "main": "ontoiServer2.js",
   "dependencies": {
     "body-parser": "~1.0.1",
     "express": "~4.0.0",

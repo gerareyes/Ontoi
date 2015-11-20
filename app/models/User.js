@@ -24,7 +24,7 @@ var UserSchema   = new Schema({
     type: String,
     lowercase: true
   },
-
+  TokensExpired: [ ],
   Password: {
     type: String,
     require: true

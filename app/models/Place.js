@@ -21,7 +21,8 @@ var PlaceSchema   = new Schema({
       require: true
     }
   },
-  Rate: [ ]
+  Rate: [ ],
+  Visitors: [ ]
 });
 
 module.exports = mongoose.model('Place', PlaceSchema);

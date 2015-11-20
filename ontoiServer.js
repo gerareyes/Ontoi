@@ -162,7 +162,7 @@ router.route('/places/:place_id/rate')
             Email: req.decoded.Email,
             Rate: req.body.Rate
           });
-        Place.findByIdAndUpdate({ _id: _id }, { $push: { Rate: userPlaceRate } }, { safe: true, upsert: true }, function (err, result) {
+        Place.findByIdAndUpdate({ _id: _id }, { $addToSet: { Rate: userPlaceRate } }, { safe: true, upsert: true }, function (err, result) {
           if (err)
             res.send({ response_code: 1, response_status: 'error', response_message: 'Missing required information'});
 
